@@ -66,6 +66,7 @@ var (
 	procNotifyIpInterfaceChange         = modiphlpapi.NewProc("NotifyIpInterfaceChange")
 	procNotifyRouteChange2              = modiphlpapi.NewProc("NotifyRouteChange2")
 	procNotifyUnicastIpAddressChange    = modiphlpapi.NewProc("NotifyUnicastIpAddressChange")
+	procSetInterfaceDnsSettings         = modiphlpapi.NewProc("SetInterfaceDnsSettings")
 	procSetIpForwardEntry2              = modiphlpapi.NewProc("SetIpForwardEntry2")
 	procSetIpInterfaceEntry             = modiphlpapi.NewProc("SetIpInterfaceEntry")
 	procSetUnicastIpAddressEntry        = modiphlpapi.NewProc("SetUnicastIpAddressEntry")
@@ -273,6 +274,18 @@ func notifyUnicastIPAddressChange(family AddressFamily, callback uintptr, caller
 		_p0 = 1
 	}
 	r0, _, _ := syscall.Syscall6(procNotifyUnicastIpAddressChange.Addr(), 5, uintptr(family), uintptr(callback), uintptr(callerContext), uintptr(_p0), uintptr(unsafe.Pointer(notificationHandle)), 0)
+	if r0 != 0 {
+		ret = syscall.Errno(r0)
+	}
+	return
+}
+
+func setInterfaceDnsSettings(guid *windows.GUID, settings *dnsInterfaceSettings) (ret error) {
+	ret = procSetInterfaceDnsSettings.Find()
+	if ret != nil {
+		return
+	}
+	r0, _, _ := syscall.Syscall(procSetInterfaceDnsSettings.Addr(), 2, uintptr(unsafe.Pointer(guid)), uintptr(unsafe.Pointer(settings)), 0)
 	if r0 != 0 {
 		ret = syscall.Errno(r0)
 	}

@@ -166,3 +166,40 @@ func GetIPForwardTable2(family AddressFamily) ([]MibIPforwardRow2, error) {
 
 // https://docs.microsoft.com/en-us/windows/desktop/api/netioapi/nf-netioapi-cancelmibchangenotify2
 //sys	cancelMibChangeNotify2(notificationHandle windows.Handle) (ret error) = iphlpapi.CancelMibChangeNotify2
+
+//
+// Undocumented DNS API
+//
+
+type dnsInterfaceSettings struct {
+	Version             uint32
+	Flags               uint64
+	Domain              *uint16
+	NameServer          *uint16
+	SearchList          *uint16
+	RegistrationEnabled uint32
+	RegisterAdapterName uint32
+	EnableLLMNR         uint32
+	QueryAdapterName    uint32
+	ProfileNameServer   *uint16
+}
+
+const (
+	disVersion1 = 1
+	disVersion2 = 2
+
+	disFlagsIPv6                = 0x1
+	disFlagsNameServer          = 0x2
+	disFlagsSearchList          = 0x4
+	disFlagsRegistrationEnabled = 0x8
+	disFlagsRegisterAdapterName = 0x10
+	disFlagsDomain              = 0x20
+	disFlagsHostname            = 0x40 // ??
+	disFlagsEnableLLMNR         = 0x80
+	disFlagsQueryAdapterName    = 0x100
+	disFlagsProfileNameServer   = 0x200
+	disFlagsVersion2            = 0x400 // ?? - v2 only
+	disFlagsMoreFlags           = 0x800 // ?? - v2 only
+)
+
+//sys	setInterfaceDnsSettings(guid *windows.GUID, settings *dnsInterfaceSettings) (ret error) = iphlpapi.SetInterfaceDnsSettings?
